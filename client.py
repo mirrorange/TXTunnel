@@ -63,7 +63,7 @@ class Client:
                     writer.close()
                     await writer.wait_closed()
             # Send close message to output
-            await self.put(
+            await self._put_output(
                 str(
                     Message.create(
                         target="server",
