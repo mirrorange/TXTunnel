@@ -78,7 +78,10 @@ class Server:
                 if writer.transport is not None:
                     # Remove connection from dict and close socket
                     writer.close()
-                    await writer.wait_closed()
+                    try:
+                        await writer.wait_closed()
+                    except ConnectionAbortedError:
+                        pass
             # Notify server to close connection
             await self._put_output(
                 str(
@@ -124,7 +127,10 @@ class Server:
                             writer = self.client_connections[conn_id]
                             if writer.transport is not None:
                                 writer.close()
-                                await writer.wait_closed()
+                                try:
+                                    await writer.wait_closed()
+                                except ConnectionAbortedError:
+                                    pass
                             del self.client_connections[conn_id]
                 elif message.type == MessageType.DATA:
                     # Send data to client
@@ -139,7 +145,10 @@ class Server:
                 for writer in self.client_connections.values():
                     if writer.transport is not None:
                         writer.close()
-                        await writer.wait_closed()
+                        try:
+                            await writer.wait_closed()
+                        except ConnectionAbortedError:
+                            pass
 
     async def start(self):
         """
